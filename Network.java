@@ -1,3 +1,5 @@
+import java.util.List;
+
 /** Represents a social network. The network has users, who follow other users.
  *  Each user is an instance of the User class. */
 public class Network {
@@ -31,7 +33,7 @@ public class Network {
      *  Notice that the method receives a String, and returns a User object. */
     public User getUser(String name) {
         for (int i = 0; i < userCount; i++) {
-            if (users[i].getName().equals(name)) {
+            if (users[i].getName().equalsIgnoreCase (name)) {
                 return users[i];
             }
         }
@@ -60,19 +62,19 @@ public class Network {
      *  If any of the two names is not a user in this network,
      *  or if the "follows" addition failed for some reason, returns false. */
     public boolean addFollowee(String name1, String name2) {
+        if (name1.equalsIgnoreCase(name2)) {
+            System.out.println("User cannot follow themselves.");
+            return false;
+        }
         User user1 = getUser(name1);
         User user2 = getUser(name2);
-
-        if (user1 == null) {
-            System.out.println("User " + name1 + " not found in the network.");
+    
+        if (user1 == null || user2 == null) {
+            System.out.println("One or both users not found in the network.");
             return false;
         }
-        if (user2 == null) {
-            System.out.println("User " + name2 + " not found in the network.");
-            return false;
-        }
-
-        if (user1.addFollowee(name2)) {
+    
+        if (user1.addFollowee(user2.getName())) {
             System.out.println(name1 + " is now following " + name2);
             return true;
         } else {
@@ -80,7 +82,7 @@ public class Network {
             return false;
         }
     }
-    
+        
     /** For the user with the given name, recommends another user to follow. The recommended user is
      *  the user that has the maximal mutual number of followees as the user with the given name. */
     public String recommendWhoToFollow(String name) {
@@ -136,11 +138,21 @@ public class Network {
     }
 
     // Returns a textual description of all the users in this network, and who they follow.
+    
     public String toString() {
         StringBuilder sb = new StringBuilder("Network:\n");
         for (int i = 0; i < userCount; i++) {
-            sb.append(users[i].toString()).append("\n");
+            sb.append(users[i].getName()).append(" -> ");
+            List<String> followees = users[i].getFollowees(); // Assuming User class has a method to get followees
+            if (followees.isEmpty()) {
+                sb.append("\n");
+            } else {
+                for (String followee : followees) {
+                    sb.append(followee).append(", ");
+                }
+                sb.setLength(sb.length() - 2); // Remove the last comma and space
+                sb.append("\n");
+            }
         }
         return sb.toString().trim();
     }
-}
