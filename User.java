@@ -12,18 +12,20 @@
     /** Creates a user with an empty list of followees. */
     public User(String name) {
         this.name = name;
-        follows = new String[maxfCount]; // fixed-size array for storing followees
-        fCount = 0;                      // initial number of followees
+        this.follows = new String[maxfCount]; // fixed-size array for storing followees
+        this.fCount = 0;                      // initial number of followees
     }
 
     /** Creates a user with some followees. The only purpose of this constructor is 
      *  to allow testing the toString and follows methods, before implementing other methods. */
     public User(String name, boolean gettingStarted) {
         this(name);
-        follows[0] = "Foo";
-        follows[1] = "Bar";
-        follows[2] = "Baz";
-        fCount = 3;
+        if (gettingStarted) {
+            follows[0] = "Foo";
+            follows[1] = "Bar";
+            follows[2] = "Baz";
+            fCount = 3;
+        }
     }
 
     /** Returns the name of this user. */
@@ -32,19 +34,19 @@
     }
 
     /** Returns the follows array. */
-    public String[] getfFollows() {
+    public String[] getFollows() {
         return follows;
     }
 
     /** Returns the number of users that this user follows. */
-    public int getfCount() {
+    public int getFollowCount() {
         return fCount;
     }
 
     /** If this user follows the given name, returns true; otherwise returns false. */
-    public boolean follows(String name) {
+    public boolean follows(String otherName) {
         for (int i = 0; i < fCount; i++) {
-            if (follows[i].equals(name)) {
+            if (follows[i].equalsIgnoreCase(otherName)) {
                 return true;
             }
         }
@@ -53,42 +55,41 @@
 
     /** Makes this user follow the given name. If successful, returns true. 
      *  If this user already follows the given name, or if the follows list is full, does nothing and returns false; */
-    public boolean addFollowee(String name) {
+    public boolean addFollowee(String otherName) {
         if (fCount >= maxfCount) {
             System.out.println("Cannot follow more users. Max limit reached.");
             return false;
         }
-        if (follows(name)) {
-            System.out.println("Already following " + name);
+        if (follows(otherName)) {
+            System.out.println("Already following " + otherName);
             return false;
         }
-        follows[fCount++] = name;
-        System.out.println(this.name + " is now following " + name);
+        follows[fCount++] = otherName;
+        System.out.println(this.name + " is now following " + otherName);
         return true;
     }
 
     /** Removes the given name from the follows list of this user. If successful, returns true.
      *  If the name is not in the list, does nothing and returns false. */
-    public boolean removeFollowee(String name) {
+    public boolean removeFollowee(String otherName) {
         int index = -1;
         for (int i = 0; i < fCount; i++) {
-            if (follows[i].equals(name)) {
+            if (follows[i].equalsIgnoreCase(otherName)) {
                 index = i;
                 break;
             }
         }
 
         if (index == -1) {
-            System.out.println("User " + name + " not found in follow list.");
+            System.out.println("User " + otherName + " not found in follow list.");
             return false;
         }
 
         for (int i = index; i < fCount - 1; i++) {
             follows[i] = follows[i + 1];
         }
-
         follows[--fCount] = null;
-        System.out.println(name + " has been removed from " + this.name + "'s follow list.");
+        System.out.println(otherName + " has been removed from " + this.name + "'s follow list.");
         return true;
     }
 
@@ -112,10 +113,10 @@
 
     /** Returns this user's name, and the names that s/he follows. */
     public String toString() {
-        String ans = name + " -> ";
+        StringBuilder result = new StringBuilder(name + " -> ");
         for (int i = 0; i < fCount; i++) {
-            ans = ans + follows[i] + " ";
+            result.append(follows[i]).append(" ");
         }
-        return ans.trim();
+        return result.toString().trim();
     }
 }
