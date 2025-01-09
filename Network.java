@@ -117,13 +117,12 @@ public class Network {
 
 /** Returns a textual description of all the users in this network, and who they follow. */
 public String toString() {
-    StringBuilder sb = new StringBuilder("Network:\n");
+    StringBuilder sb = new StringBuilder("Network:");
     for (int i = 0; i < userCount; i++) {
-        sb.append(users[i].getName()).append(" -> ");
+        sb.append("\n").append(users[i].getName()).append(" -> ");
         for (int j = 0; j < users[i].getfCount(); j++) {
             sb.append(users[i].getfFollows()[j]).append(" ");
         }
-        sb.append("\n");
     }
     return sb.toString();
 }
